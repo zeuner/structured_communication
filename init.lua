@@ -67,12 +67,12 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[7,7]"
+            "size[8,9]list[current_player;offer;0,0;8,4;]list[current_player;main;0,5;8,4;]listring[]"
         )
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[7,7]"
+            "size[8,9]list[current_player;offer;0,0;8,4;]list[current_player;main;0,5;8,4;]listring[]"
         )
     end
 )
@@ -103,6 +103,15 @@ minetest.register_on_player_receive_fields(
             other,
             "structured_communication:main"
         )
+        minetest.chat_send_player(
+            other,
+            string.format(
+                S(
+                    "session closed by %s"
+                ),
+                name
+            )
+        )
         sessions[
             other
         ] = nil
@@ -112,3 +121,15 @@ minetest.register_on_player_receive_fields(
     end
 )
 
+minetest.register_on_joinplayer(
+    function(
+        player
+    )
+        local inv = player:get_inventory(
+        )
+        inv:set_size(
+            "offer",
+            8
+        )
+    end
+)
