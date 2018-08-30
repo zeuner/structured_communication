@@ -21,13 +21,13 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked:get_player_name(
             ),
-            "structured_communication",
+            "structured_communication:main",
             "size[7,7]"
         )
         minetest.show_formspec(
             clicker:get_player_name(
             ),
-            "structured_communication",
+            "structured_communication:main",
             "size[7,7]"
         )
     end
