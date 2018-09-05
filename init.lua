@@ -67,12 +67,12 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[8,9]list[current_player;offer;0,0;8,4;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[current_player;offer;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
         )
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[8,9]list[current_player;offer;0,0;8,4;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[current_player;offer;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
         )
     end
 )
@@ -130,6 +130,31 @@ minetest.register_on_joinplayer(
         inv:set_size(
             "offer",
             8
+        )
+        local name = player:get_player_name(
+        )
+        local detached = minetest.create_detached_inventory(
+            "offer_" .. name,
+            {
+                allow_move = function(
+                )
+                    return 0
+                end,
+                allow_put = function(
+                )
+                    return 0
+                end,
+                allow_take = function(
+                )
+                    return 0
+                end,
+            }
+        )
+        detached:set_list(
+            'main',
+            inv:get_list(
+                'offer'
+            )
         )
     end
 )
