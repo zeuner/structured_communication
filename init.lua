@@ -67,12 +67,12 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[8,9]list[current_player;offer;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
         )
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[8,9]list[current_player;offer;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
         )
     end
 )
@@ -125,36 +125,57 @@ minetest.register_on_joinplayer(
     function(
         player
     )
-        local inv = player:get_inventory(
-        )
-        inv:set_size(
-            "offer",
-            8
-        )
         local name = player:get_player_name(
         )
         local detached = minetest.create_detached_inventory(
             "offer_" .. name,
             {
                 allow_move = function(
+                    inv,
+                    from_list,
+                    from_index,
+                    to_list,
+                    to_index,
+                    count,
+                    action_player
                 )
                     return 0
                 end,
                 allow_put = function(
+                    inv,
+                    to_list,
+                    to_index,
+                    stack,
+                    action_player
                 )
+                    local action_name = action_player:get_player_name(
+                    )
+                    if name == action_name then
+                        return stack:get_count(
+                        )
+                    end
                     return 0
                 end,
                 allow_take = function(
+                    inv,
+                    from_list,
+                    from_index,
+                    stack,
+                    action_player
                 )
+                    local action_name = action_player:get_player_name(
+                    )
+                    if name == action_name then
+                        return stack:get_count(
+                        )
+                    end
                     return 0
                 end,
             }
         )
-        detached:set_list(
-            'main',
-            inv:get_list(
-                'offer'
-            )
+        detached:set_size(
+            "main",
+            8
         )
     end
 )
