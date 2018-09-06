@@ -28,6 +28,20 @@ end
 local sessions = {
 }
 
+local agreements = {
+}
+
+local agreement_key = function(
+    clicker,
+    clicked
+)
+    if clicker < clicked then
+        return clicker .. " " .. clicked
+    else
+        return clicked .. " " .. clicker
+    end
+end
+
 minetest.register_on_rightclickplayer(
     function(
         clicked,
@@ -36,6 +50,33 @@ minetest.register_on_rightclickplayer(
         local clicked_name = clicked:get_player_name(
         )
         local clicker_name = clicker:get_player_name(
+        )
+        local clicked_offer = minetest.get_inventory(
+            {
+                type = "detached",
+                name = "offer_" .. clicked_name,
+            }
+        )
+        if not clicked_offer then
+            fatal(
+                "clicked player does not have an offer inventory"
+            )
+        end
+        local clicker_offer = minetest.get_inventory(
+            {
+                type = "detached",
+                name = "offer_" .. clicker_name,
+            }
+        )
+        if not clicker_offer then
+            fatal(
+                "clicking player does not have an offer inventory"
+            )
+        end
+        print(
+            "clicking player offer size " .. clicker_offer:get_size(
+                "main"
+            )
         )
         if sessions[
             clicker_name
@@ -58,6 +99,13 @@ minetest.register_on_rightclickplayer(
             )
             return
         end
+        agreements[
+            agreement_key(
+                clicker_name,
+                clicked_name
+            )
+        ] = {
+        }
         sessions[
             clicked_name
         ] = clicker_name
@@ -67,12 +115,12 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]list[current_player;main;0,5;8,4;]"
         )
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]list[current_player;main;0,5;8,4;]listring[]"
+            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]list[current_player;main;0,5;8,4;]"
         )
     end
 )
@@ -96,28 +144,64 @@ minetest.register_on_player_receive_fields(
                 "no other player registered"
             )
         end
-        if not fields.quit then
+        if fields.quit then
+            minetest.close_formspec(
+                other,
+                "structured_communication:main"
+            )
+            minetest.chat_send_player(
+                other,
+                string.format(
+                    S(
+                        "session closed by %s"
+                    ),
+                    name
+                )
+            )
+            agreements[
+                agreement_key(
+                    name,
+                    other
+                )
+            ] = nil
+            sessions[
+                other
+            ] = nil
+            sessions[
+                name
+            ] = nil
             return true
         end
-        minetest.close_formspec(
-            other,
-            "structured_communication:main"
-        )
-        minetest.chat_send_player(
-            other,
-            string.format(
-                S(
-                    "session closed by %s"
-                ),
+        if fields.accept then
+            if not agreements[
+                agreement_key(
+                    name,
+                    other
+                )
+            ][
                 name
-            )
-        )
-        sessions[
-            other
-        ] = nil
-        sessions[
-            name
-        ] = nil
+            ] then
+                agreements[
+                    agreement_key(
+                        name,
+                        other
+                    )
+                ][
+                    name
+                ] = true
+                minetest.chat_send_player(
+                    other,
+                    string.format(
+                        S(
+                            "%s has accepted your offer"
+                        ),
+                        name
+                    )
+                )
+            end
+            return true
+        end
+        return false
     end
 )
 
