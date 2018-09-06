@@ -42,6 +42,24 @@ local agreement_key = function(
     end
 end
 
+local temporary_inventory = minetest.create_detached_inventory(
+    "temporary",
+    {
+        allow_move = function(
+        )
+            return 0
+        end,
+        allow_put = function(
+        )
+            return 0
+        end,
+        allow_take = function(
+        )
+            return 0
+        end,
+    }
+)
+
 minetest.register_on_rightclickplayer(
     function(
         clicked,
@@ -198,6 +216,64 @@ minetest.register_on_player_receive_fields(
                         name
                     )
                 )
+                if agreements[
+                    agreement_key(
+                        name,
+                        other
+                    )
+                ][
+                    other
+                ] then
+                    local own_offer = minetest.get_inventory(
+                        {
+                            type = "detached",
+                            name = "offer_" .. name,
+                        }
+                    )
+                    local other_offer = minetest.get_inventory(
+                        {
+                            type = "detached",
+                            name = "offer_" .. other,
+                        }
+                    )
+                    temporary_inventory:set_list(
+                        "main",
+                        own_offer:get_list(
+                            "main"
+                        )
+                    )
+                    own_offer:set_list(
+                        "main",
+                        other_offer:get_list(
+                            "main"
+                        )
+                    )
+                    other_offer:set_list(
+                        "main",
+                        temporary_inventory:get_list(
+                            "main"
+                        )
+                    )
+                    minetest.chat_send_player(
+                        name,
+                        S(
+                            "the trade has been completed"
+                        )
+                    )
+                    minetest.chat_send_player(
+                        other,
+                        S(
+                            "the trade has been completed"
+                        )
+                    )
+                    agreements[
+                        agreement_key(
+                            name,
+                            other
+                        )
+                    ] = {
+                    }
+                end
             end
             return true
         end
