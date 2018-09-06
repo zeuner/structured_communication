@@ -115,12 +115,12 @@ minetest.register_on_rightclickplayer(
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]list[current_player;main;0,5;8,4;]"
+            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]button[4,3.5;3,1;retract;Retract]list[current_player;main;0,5;8,4;]"
         )
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]list[current_player;main;0,5;8,4;]"
+            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]button[4,3.5;3,1;retract;Retract]list[current_player;main;0,5;8,4;]"
         )
     end
 )
@@ -201,6 +201,35 @@ minetest.register_on_player_receive_fields(
             end
             return true
         end
+        if fields.retract then
+            if agreements[
+                agreement_key(
+                    name,
+                    other
+                )
+            ][
+                name
+            ] then
+                agreements[
+                    agreement_key(
+                        name,
+                        other
+                    )
+                ][
+                    name
+                ] = nil
+                minetest.chat_send_player(
+                    other,
+                    string.format(
+                        S(
+                            "offer by %s has been retracted"
+                        ),
+                        name
+                    )
+                )
+            end
+            return true
+        end
         return false
     end
 )
@@ -254,6 +283,43 @@ minetest.register_on_joinplayer(
                         )
                     end
                     return 0
+                end,
+                on_take = function(
+                    inv,
+                    from_list,
+                    from_index,
+                    stack,
+                    action_player
+                )
+                    local other = sessions[
+                        name
+                    ]
+                    if agreements[
+                        agreement_key(
+                            name,
+                            other
+                        )
+                    ][
+                        other
+                    ] then
+                        agreements[
+                            agreement_key(
+                                name,
+                                other
+                            )
+                        ][
+                            other
+                        ] = nil
+                        minetest.chat_send_player(
+                            name,
+                            string.format(
+                                S(
+                                    "offer acceptance by %s invalidated"
+                                ),
+                                other
+                            )
+                        )
+                    end
                 end,
             }
         )
