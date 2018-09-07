@@ -31,6 +31,9 @@ local sessions = {
 local agreements = {
 }
 
+local last_session = {
+}
+
 local agreement_key = function(
     clicker,
     clicked
@@ -59,6 +62,37 @@ local temporary_inventory = minetest.create_detached_inventory(
         end,
     }
 )
+
+local move_items = function(
+    from,
+    to
+)
+    for index = 1, from:get_size(
+        "main"
+    ) do
+        local copy = from:get_stack(
+            "main",
+            index
+        )
+        if copy then
+            if not to:room_for_item(
+                "main",
+                copy
+            ) then
+                return false
+            end
+            local taken = from:remove_item(
+                "main",
+                copy
+            )
+            to:add_item(
+                "main",
+                taken
+            )
+        end
+    end
+    return true
+end
 
 minetest.register_on_rightclickplayer(
     function(
@@ -116,6 +150,63 @@ minetest.register_on_rightclickplayer(
                 )
             )
             return
+        end
+        if last_session[
+            clicker_name
+        ] ~= clicked_name then
+            if not move_items(
+                clicker_offer,
+                minetest.get_inventory(
+                    {
+                        type = "player",
+                        name = clicker_name,
+                    }
+                )
+            ) then
+                minetest.chat_send_player(
+                    clicker_name,
+                    S(
+                        "please make room in your inventory"
+                    )
+                )
+                return
+            end
+            last_session[
+                clicker_name
+            ] = clicked_name
+        end
+        if last_session[
+            clicked_name
+        ] ~= clicker_name then
+            if not move_items(
+                clicked_offer,
+                minetest.get_inventory(
+                    {
+                        type = "player",
+                        name = clicked_name,
+                    }
+                )
+            ) then
+                minetest.chat_send_player(
+                    clicked_name,
+                    S(
+                        "please make room in your inventory"
+                    )
+                )
+                minetest.chat_send_player(
+                    clicker_name,
+                    string.format(
+                        S(
+                            "player %s is busy"
+                        ),
+                        clicked_name
+                    )
+                )
+                return
+            end
+            last_session[
+                clicker_name
+            ] = clicked_name
         end
         agreements[
             agreement_key(
