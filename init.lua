@@ -221,29 +221,15 @@ minetest.register_on_rightclickplayer(
         sessions[
             clicker_name
         ] = clicked_name
-        local formspec
-        formspec = ""
-        formspec = formspec .. "size[8,9]"
-        formspec = formspec .. "list[detached:offer_" .. clicked_name .. ";main;0,0;8,1;]"
-        formspec = formspec .. "list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]"
-        formspec = formspec .. "button[0,3.5;3,1;accept;Accept]"
-        formspec = formspec .. "button[4,3.5;3,1;retract;Retract]"
-        formspec = formspec .. "list[current_player;main;0,5;8,4;]"
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            formspec
+            "size[8,9]list[detached:offer_" .. clicked_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicker_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]button[4,3.5;3,1;retract;Retract]list[current_player;main;0,5;8,4;]"
         )
-        formspec = ""
-        formspec = formspec .. "list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]"
-        formspec = formspec .. "list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]"
-        formspec = formspec .. "button[0,3.5;3,1;accept;Accept]"
-        formspec = formspec .. "button[4,3.5;3,1;retract;Retract]"
-        formspec = formspec .. "list[current_player;main;0,5;8,4;]"
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            formspec
+            "size[8,9]list[detached:offer_" .. clicker_name .. ";main;0,0;8,1;]list[detached:offer_" .. clicked_name .. ";main;0,2;8,1;]button[0,3.5;3,1;accept;Accept]button[4,3.5;3,1;retract;Retract]list[current_player;main;0,5;8,4;]"
         )
     end
 )
