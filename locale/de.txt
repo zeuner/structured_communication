@@ -1,0 +1,7 @@
+offer acceptance by %s invalidated = Zustimmung von %s wurde ungültig
+offer by %s has been retracted = Zustimmung von %s wurde zurückgezogen
+player %s is busy = Spieler %s ist beschäftigt
+please make room in your inventory = Bitte Platz im Inventar schaffen
+session closed by %s = Sitzung geschlossen von %s
+%s has accepted your offer = %s hat das Angebot akzeptiert
+the trade has been completed = Handel abgeschlossen

@@ -1,0 +1,7 @@
+offer acceptance by %s invalidated =
+offer by %s has been retracted =
+player %s is busy =
+please make room in your inventory =
+session closed by %s =
+%s has accepted your offer =
+the trade has been completed =
