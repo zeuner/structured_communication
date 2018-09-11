@@ -125,11 +125,6 @@ minetest.register_on_rightclickplayer(
                 "clicking player does not have an offer inventory"
             )
         end
-        print(
-            "clicking player offer size " .. clicker_offer:get_size(
-                "main"
-            )
-        )
         if sessions[
             clicker_name
         ] then
