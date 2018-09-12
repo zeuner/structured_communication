@@ -210,41 +210,43 @@ minetest.register_on_rightclickplayer(
         sessions[
             clicker_name
         ] = clicked_name
+        local clicked_formspec = "size[8,12]label[0,0.3;" .. S(
+            "Your offer"
+        ) .. ":]list[detached:offer_" .. clicked_name .. ";main;0,1;8,1;]label[0,3.3;" .. string.format(
+            S(
+                "Offer by %s"
+            ),
+            clicker_name
+        ) .. ":]list[detached:offer_" .. clicker_name .. ";main;0,4;8,1;]button[0,5.5;3,1;accept;" .. S(
+            "Accept"
+        ) .. "]button[4,5.5;3,1;retract;" .. S(
+            "Retract"
+        ) .. "]label[0,7.3;" .. S(
+            "Your inventory"
+        ) .. ":]list[current_player;main;0,8;8,4;]"
         minetest.show_formspec(
             clicked_name,
             "structured_communication:main",
-            "size[8,12]label[0,0.3;" .. S(
-                "Your offer"
-            ) .. ":]list[detached:offer_" .. clicked_name .. ";main;0,1;8,1;]label[0,3.3;" .. string.format(
-                S(
-                    "Offer by %s"
-                ),
-                clicker_name
-            ) .. ":]list[detached:offer_" .. clicker_name .. ";main;0,4;8,1;]button[0,5.5;3,1;accept;" .. S(
-                "Accept"
-            ) .. "]button[4,5.5;3,1;retract;" .. S(
-                "Retract"
-            ) .. "]label[0,7.3;" .. S(
-                "Your inventory"
-            ) .. ":]list[current_player;main;0,8;8,4;]"
+            clicked_formspec
         )
+        local clicker_formspec = "size[8,12]label[0,0.3;" .. S(
+            "Your offer"
+        ) .. ":]list[detached:offer_" .. clicker_name .. ";main;0,1;8,1;]label[0,3.3;" .. string.format(
+            S(
+                "Offer by %s"
+            ),
+            clicked_name
+        ) .. ":]list[detached:offer_" .. clicked_name .. ";main;0,4;8,1;]button[0,5.5;3,1;accept;" .. S(
+            "Accept"
+        ) .. "]button[4,5.5;3,1;retract;" .. S(
+            "Retract"
+        ) .. "]label[0,7.3;" .. S(
+            "Your inventory"
+        ) .. ":]list[current_player;main;0,8;8,4;]"
         minetest.show_formspec(
             clicker_name,
             "structured_communication:main",
-            "size[8,12]label[0,0.3;" .. S(
-                "Your offer"
-            ) .. ":]list[detached:offer_" .. clicker_name .. ";main;0,1;8,1;]label[0,3.3;;" .. string.format(
-                S(
-                    "Offer by %s"
-                ),
-                clicked_name
-            ) .. ":]list[detached:offer_" .. clicked_name .. ";main;0,4;8,1;]button[0,5.5;3,1;accept;" .. S(
-                "Accept"
-            ) .. "]button[4,5.5;3,1;retract;" .. S(
-                "Retract"
-            ) .. "]label[0,7.3;" .. S(
-                "Your inventory"
-            ) .. ":]list[current_player;main;0,8;8,4;]"
+            clicker_formspec
         )
     end
 )
